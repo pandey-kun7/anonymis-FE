@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 
-export default function GroupsList({ groups, selectedGroupId, setSelectedGroupId }) {
+export default function GroupsList({
+  groups,
+  selectedGroupId,
+  setSelectedGroupId,
+}) {
   const [searchTerm, setSearchTerm] = useState("");
+
+  const handleOnGroupClick = async (groupId)=>{
+    setSelectedGroupId(groupId);
+
+  }
 
   return (
     <div className="w-[300px] h-full flex flex-col bg-[#fffdf9]">
@@ -21,11 +30,15 @@ export default function GroupsList({ groups, selectedGroupId, setSelectedGroupId
       {/* Groups List */}
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
         {groups
-          .filter(g => (g.name || g.groupName).toLowerCase().includes(searchTerm.toLowerCase()))
-          .map(group => (
+          .filter((g) =>
+            (g.name || g.groupName)
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase()),
+          )
+          .map((group) => (
             <div
               key={group._id}
-              onClick={() => setSelectedGroupId(group._id)}
+              onClick={() => handleOnGroupClick(group._id)}
               className={`p-3 border-2 border-black rounded-[15px] 
                          shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)] 
                          flex items-center gap-3 cursor-pointer 
@@ -36,7 +49,9 @@ export default function GroupsList({ groups, selectedGroupId, setSelectedGroupId
               <div className="w-10 h-10 bg-white border-2 border-black rounded-full flex items-center justify-center font-bold">
                 {(group.name || group.groupName)[0]}
               </div>
-              <span className="font-bold text-sm">{group.name || group.groupName}</span>
+              <span className="font-bold text-sm">
+                {group.name || group.groupName}
+              </span>
             </div>
           ))}
       </div>

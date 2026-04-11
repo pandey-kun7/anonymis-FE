@@ -7,6 +7,7 @@ export default function LoginPage({ showPopup }) {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
+    localStorage.setItem("email",email)
     const apiUrl = "http://localhost:8000/api/auth/login";
     const requestBody = {
       email,

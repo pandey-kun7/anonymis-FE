@@ -5,22 +5,22 @@ const socket = io("http://localhost:8000", {
   auth: { token: localStorage.getItem("token") }
 });
 
-export default function ChatWindow({ groupId }) {
+export default function ChatWindow({ groupId, initialMessages = [] }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [userId, setUserId] = useState(null);
+  const userTag = localStorage.getItem("userTag");
   const [connectionStatus, setConnectionStatus] = useState("connecting");
+
+  useEffect(() => {
+    setMessages(initialMessages);
+  }, [initialMessages]);
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
     console.log("Stored userId:", storedUserId);
     if (storedUserId) {
       setUserId(storedUserId);
-    } else {
-      const dummyId = "user_" + Math.random().toString(36).substr(2, 9);
-      console.log("Generated dummyId:", dummyId);
-      localStorage.setItem("userId", dummyId);
-      setUserId(dummyId);
     }
 
     socket.on("connect", () => {
@@ -53,7 +53,7 @@ export default function ChatWindow({ groupId }) {
     }
 
     console.log(`Emitting "join" for groupId: ${groupId} and userId: ${userId}`);
-    socket.emit("join", { groupId, userId });
+    socket.emit("join", { groupId, userId ,userTag });
 
     socket.on("receive-message", (msg) => {
       console.log("Received message:", msg);
@@ -75,11 +75,12 @@ export default function ChatWindow({ groupId }) {
     const newMessage = {
       groupId,
       text: input,
+      senderTag: userTag,
     };
 
     socket.emit("send-message", newMessage);
     // Add message to local state immediately for better UX
-    setMessages((prev) => [...prev, { ...newMessage, _id: Date.now().toString(), userId: userId, text: input }]);
+    // setMessages((prev) => [...prev, { ...newMessage, _id: Date.now().toString(), userId: userId, text: input }]);
     setInput("");
   };
 
@@ -110,13 +111,13 @@ export default function ChatWindow({ groupId }) {
         {messages.map((msg, index) => (
           <div
             key={msg._id || index}
-            className={`max-w-[70%] p-3 rounded-[15px] border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] ${
+            className={`max-w-[70%] wrap-break-word p-3 rounded-[15px] border-2 border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.8)] ${
               msg.senderId === userId
                 ? "self-end bg-[#caffbf]"
                 : "self-start bg-[#fffdf9]"
             }`}
           >
-            <strong>{msg.senderId === userId ? "You" : msg.senderId}:</strong> {msg.content}
+            <strong>{msg.senderId === userId ? "You" : msg.senderTag}:</strong> {msg.content}
           </div>
         ))}
       </div>

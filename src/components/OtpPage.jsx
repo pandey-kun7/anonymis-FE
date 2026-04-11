@@ -26,6 +26,7 @@ export default function OtpPage({ showPopup, email }) {
       if (res.success) {
         localStorage.setItem("token",res["data"]["token"])
         localStorage.setItem("userId",res["data"]["userId"])
+        localStorage.setItem("userTag",res["data"]["userTag"])
         showPopup("OTP verified successfully!");
         navigate("/chat");
       } else {
