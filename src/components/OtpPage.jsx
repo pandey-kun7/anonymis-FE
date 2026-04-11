@@ -21,14 +21,15 @@ export default function OtpPage({ showPopup, email }) {
         body: JSON.stringify(requestBody),
       });
 
-      const data = await response.json();
+      const res = await response.json();
 
-      if (data.success) {
-        localStorage.setItem("token",data["data"])
+      if (res.success) {
+        localStorage.setItem("token",res["data"]["token"])
+        localStorage.setItem("userId",res["data"]["userId"])
         showPopup("OTP verified successfully!");
         navigate("/chat");
       } else {
-        showPopup(data.message || "Invalid OTP");
+        showPopup(res.message || "Invalid OTP");
       }
     } catch (error) {
       showPopup("An error occurred. Please try again.");

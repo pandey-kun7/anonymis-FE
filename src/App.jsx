@@ -3,8 +3,9 @@ import { Routes, Route } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 import SignUp from './components/SignUp';
 import OtpPage from './components/OtpPage';
-import ChatArea from './components/ChatArea';
+import ChatArea from './components/chatArea/ChatLayout';
 import './App.css';
+import { ProtectedRoutes } from './components/ProtectedRoute';
 
 function App() {
   const [popup, setPopup] = useState({ message: '', visible: false });
@@ -32,7 +33,9 @@ function App() {
         <Route path="/" element={renderWithProps(<SignUp />)} />
         <Route path="/login" element={renderWithProps(<LoginPage />)} />
         <Route path="/otp" element={renderWithProps(<OtpPage />)} />
-        <Route path="/chat" element={<ChatArea />} />
+        <Route element= {<ProtectedRoutes />}>
+          <Route path="/chat" element={<ChatArea />} />
+        </Route>
       </Routes>
       {popup.visible && (
         <div className="fixed top-5 right-5 bg-red-500 text-white p-3 rounded shadow-lg">
