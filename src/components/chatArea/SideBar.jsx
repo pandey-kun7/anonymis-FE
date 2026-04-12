@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import CreateGroupModal from "./CreateGroupModal";
 import JoinGroupModal from "./JoinGroupModal";
+import UserSettingsModal from "./UserSettingsModal";
 
 export default function SideBar({ onGroupCreate, onGroupJoin }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const dropdownRef = useRef(null);
 
   const handleToggleDropdown = () => {
@@ -22,12 +24,20 @@ export default function SideBar({ onGroupCreate, onGroupJoin }) {
     setShowDropdown(false);
   };
 
+  const handleOpenSettingsModal = () => {
+    setShowSettingsModal(true);
+  };
+
   const handleCloseCreateModal = () => {
     setShowCreateModal(false);
   };
 
   const handleCloseJoinModal = () => {
     setShowJoinModal(false);
+  };
+
+  const handleCloseSettingsModal = () => {
+    setShowSettingsModal(false);
   };
 
   useEffect(() => {
@@ -88,7 +98,9 @@ export default function SideBar({ onGroupCreate, onGroupJoin }) {
         </div>
 
         {/* Option 2: Settings */}
-        <div className="w-12 h-12 bg-[#fdffb6] border-2 border-black rounded-[12px] 
+        <div 
+          onClick={handleOpenSettingsModal}
+          className="w-12 h-12 bg-[#fdffb6] border-2 border-black rounded-[12px] 
                         shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] 
                         flex items-center justify-center cursor-pointer 
                         hover:translate-x-[1px] hover:translate-y-[1px] transition">
@@ -100,6 +112,7 @@ export default function SideBar({ onGroupCreate, onGroupJoin }) {
       </div>
       {showCreateModal && <CreateGroupModal onClose={handleCloseCreateModal} onGroupCreate={onGroupCreate} />}
       {showJoinModal && <JoinGroupModal onClose={handleCloseJoinModal} onGroupJoin={onGroupJoin} />}
+      {showSettingsModal && <UserSettingsModal onClose={handleCloseSettingsModal} />}
     </>
   );
 }

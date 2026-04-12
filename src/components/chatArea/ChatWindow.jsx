@@ -102,7 +102,7 @@ export default function ChatWindow({ groupId, initialMessages = [] }) {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-4">
+      <div className="flex-1 p-6 overflow-y-auto no-scrollbar flex flex-col gap-4">
         {connectionStatus !== "connected" && (
           <div className="text-center text-gray-500">
             Could not connect to the chat server. Please make sure the server is running.
