@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 
 const socket = io("http://localhost:8000", {
@@ -6,6 +7,9 @@ const socket = io("http://localhost:8000", {
 });
 
 export default function ChatWindow({ groupId, initialMessages = [] }) {
+
+  const navigate = useNavigate();
+
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [userId, setUserId] = useState(null);
@@ -60,6 +64,13 @@ export default function ChatWindow({ groupId, initialMessages = [] }) {
       setMessages((prev) => [...prev, msg]);
     });
 
+    socket.on("group-deleted",()=>{
+      // alert("Group Expired");
+      setMessages((prev)=>[])
+      // navigate("/chat")
+      location.reload();
+    })
+
     return () => {
       console.log(`Cleaning up "receive-message" listener for groupId: ${groupId}`);
       socket.off("receive-message");
@@ -68,7 +79,7 @@ export default function ChatWindow({ groupId, initialMessages = [] }) {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (input.trim() === "" || !groupId || !userId || connectionStatus !== "connected") {
+    if (input.trim() === "" || !groupId || !userId) {
       return;
     }
 
@@ -78,11 +89,38 @@ export default function ChatWindow({ groupId, initialMessages = [] }) {
       senderTag: userTag,
     };
 
-    socket.emit("send-message", newMessage);
+    if(!navigator.onLine || connectionStatus!=="connected"){
+      const pendingMsgs = JSON.parse(localStorage.getItem("pendingMsgs") || "[]");
+      pendingMsgs.push(newMessage);
+      localStorage.setItem("pendingMsgs",JSON.stringify(pendingMsgs));
+      setInput("");
+    }else{
+      socket.emit("send-message", newMessage);
+      setInput("");
+    }
+
     // Add message to local state immediately for better UX
     // setMessages((prev) => [...prev, { ...newMessage, _id: Date.now().toString(), userId: userId, text: input }]);
-    setInput("");
   };
+
+  useEffect(()=>{
+
+     function handleOnline(){
+      const pendingMsgs = JSON.parse(localStorage.getItem("pendingMsgs") || []);
+      if(pendingMsgs.length){
+        for(const msg of pendingMsgs){
+          socket.emit("send-message",msg);
+        }
+      }
+      localStorage.removeItem("pendingMsgs")
+    }
+
+    window.addEventListener("online",handleOnline);
+
+    return ()=> window.removeEventListener("online",handleOnline);
+  
+
+  },[])
 
   const statusColors = {
     connecting: "bg-yellow-500",

@@ -83,6 +83,11 @@ export default function CreateGroupModal({ onClose, onGroupCreate }) {
           <DatePicker
             selected={expiresAt}
             onChange={(date) => setExpiresAt(date)}
+            showTimeSelect
+            timeFormat="HH:mm"
+            timeIntervals={2}
+            timeCaption="time"
+            dateFormat="MMMM d, yyyy h:mm aa"
             minDate={new Date()}
             className="w-full px-4 py-2 border-2 border-black rounded-[12px] 
                        shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)]
