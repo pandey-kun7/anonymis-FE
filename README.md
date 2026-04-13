@@ -1,110 +1,87 @@
-# Anonymis Frontend 🛡️💬
+# Anonymis Frontend
 
-Anonymis is a real-time, group chat application built with **React 19**, **Vite**, and **Tailwind CSS 4**. This repository contains the frontend implementation, featuring a sleek user interface for joining, creating, and participating in anonymous chat groups.
-
----
+Anonymis is a modern, real-time chat application built with React 19 and Vite. It features a unique, high-contrast UI design with a focus on real-time communication through groups and individual interaction.
 
 ## 🚀 Features
 
-- **Anonymous Interaction:** Engage in real-time conversations within various chat groups.
-- **Group Management:** Create new groups or join existing ones using group IDs.
-- **Secure Authentication:** 
-  - User registration and login.
-  - OTP (One-Time Password) verification for enhanced security.
-  - Protected routes to ensure only authenticated users can access the chat.
-- **Real-time Messaging:** Powered by **Socket.io** for instant message delivery and synchronization.
-- **Modern UI/UX:** 
-  - Responsive layout with a dedicated Sidebar.
-  - Dynamic group lists and interactive chat windows.
-  - Styled with the latest Tailwind CSS 4 features.
-
----
+- **Real-time Messaging**: Powered by Socket.io for instantaneous message delivery.
+- **Authentication System**: Complete flow including Sign-up, Login, and OTP (One-Time Password) verification.
+- **Group Management**: Users can create new chat groups or join existing ones.
+- **Protected Routes**: Secure access to the chat interface ensuring only authenticated users can participate.
+- **Offline Resilience**: Basic support for handling message sending during network interruptions.
+- **Unique Aesthetic**: A "Neubrutalist" inspired design with bold borders, custom shadows, and a playful "cursive" font style.
+- **Modern Tech Stack**: Built with React 19 and Tailwind CSS 4 for high performance and rapid styling.
 
 ## 🛠️ Tech Stack
 
-- **Framework:** [React 19](https://react.dev/)
-- **Build Tool:** [Vite 8](https://vitejs.dev/)
-- **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
-- **Routing:** [React Router 7](https://reactrouter.com/)
-- **Real-time Engine:** [Socket.io-client](https://socket.io/)
-- **Others:** `react-datepicker` for date selection.
+- **Framework**: [React 19](https://react.dev/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Routing**: [React Router 7](https://reactrouter.com/)
+- **Real-time Communication**: [Socket.io-client](https://socket.io/)
+- **Linting**: [ESLint](https://eslint.org/)
 
----
-
-## 📂 Project Structure
-
-```text
-src/
-├── assets/             # Images, icons, and static assets
-├── components/         # Reusable UI components
-│   ├── chatArea/       # Chat-specific components (ChatLayout, Window, Sidebar)
-│   ├── LoginPage.jsx   # Login interface
-│   ├── SignUp.jsx      # Registration interface
-│   ├── OtpPage.jsx     # OTP verification
-│   └── ProtectedRoute.jsx # Route guarding logic
-├── App.jsx             # Main application routing and state
-└── main.jsx            # Entry point
-```
-
----
-
-## ⚙️ Getting Started
+## 🏁 Getting Started
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
+- [Node.js](https://nodejs.org/) (Latest LTS recommended)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
 ### Installation
 
-1. **Clone the repository:**
+1. Clone the repository:
    ```bash
    git clone <repository-url>
    cd anonymis-fe
    ```
 
-2. **Install dependencies:**
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. **Backend Setup:**
-   Ensure the **Anonymis Backend** is running. By default, the frontend expects the API and Socket server at:
-   `http://localhost:8000`
+3. Environment Setup:
+   Ensure your backend server is running (default expectation is `http://localhost:8000`).
 
-### Running the App
+### Running the Project
 
-Start the development server:
+To start the development server:
 ```bash
 npm run dev
 ```
-Open [http://localhost:5173](http://localhost:5173) in your browser to see the application.
 
----
+To build for production:
+```bash
+npm run build
+```
 
-## 📜 Available Scripts
+## 📂 Project Structure
 
-- `npm run dev`: Starts the Vite development server.
-- `npm run build`: Compiles the application for production.
-- `npm run lint`: Runs ESLint to check for code quality issues.
-- `npm run preview`: Locally previews the production build.
+```text
+src/
+├── assets/             # Images and static assets
+├── components/         # Reusable UI components
+│   ├── chatArea/       # Core chat functionality (Layout, Window, Sidebar)
+│   ├── LoginPage.jsx   # Authentication components
+│   ├── SignUp.jsx
+│   └── ...
+├── App.jsx             # Main application component & routing
+├── main.jsx            # Entry point
+└── index.css           # Global styles and Tailwind imports
+```
 
----
+## 📡 Backend Integration
 
-## 🛠️ Configuration
+This frontend is designed to communicate with the Anonymis Backend API. It expects the following:
+- **API Base URL**: `http://localhost:8000/api`
+- **Socket Server**: `http://localhost:8000`
+- **Authentication**: JWT-based (stored in `localStorage`)
 
-The application currently connects to a backend running on `http://localhost:8000`. To change this, you will need to update the API URLs in the following files:
-- `src/components/chatArea/ChatLayout.jsx`
-- `src/components/chatArea/ChatWindow.jsx`
-- `src/components/LoginPage.jsx`
-- `src/components/SignUp.jsx`
-- `src/components/OtpPage.jsx`
+## 🎨 UI/UX Philosophy
 
-*(Consider moving these to an `.env` file for better environment management.)*
-
-
----
-
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` (if available) for more information.
+Anonymis uses a distinctive styling approach:
+- **Borders**: Heavy 2px black borders on most elements.
+- **Shadows**: Hard, non-blurred shadows (`10px 10px 0px 0px rgba(0,0,0,0.8)`).
+- **Colors**: A vibrant yet soft pastel palette for message bubbles and group avatars.
+- **Typography**: Playful font-family choices to give a friendly, approachable feel.
