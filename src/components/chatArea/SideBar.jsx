@@ -8,6 +8,8 @@ export default function SideBar({ onGroupCreate, onGroupJoin }) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showMemoryModal, setShowMemoryModal] = useState(false);
+  const [memoryMessages, setMemoryMessages] = useState([]);
   const dropdownRef = useRef(null);
 
   const handleToggleDropdown = () => {
@@ -28,6 +30,24 @@ export default function SideBar({ onGroupCreate, onGroupJoin }) {
     setShowSettingsModal(true);
   };
 
+  const fetchMemory = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/service/memory", {
+        headers: {
+            "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setMemoryMessages(data.data);
+        setShowMemoryModal(true);
+      }
+    } catch (error) {
+      console.error("Error fetching memory:", error);
+    }
+  };
+
   const handleCloseCreateModal = () => {
     setShowCreateModal(false);
   };
@@ -38,6 +58,10 @@ export default function SideBar({ onGroupCreate, onGroupJoin }) {
 
   const handleCloseSettingsModal = () => {
     setShowSettingsModal(false);
+  };
+
+  const handleCloseMemoryModal = () => {
+    setShowMemoryModal(false);
   };
 
   useEffect(() => {
@@ -109,7 +133,62 @@ export default function SideBar({ onGroupCreate, onGroupJoin }) {
             <circle cx="12" cy="12" r="3"></circle>
           </svg>
         </div>
+
+        {/* Option 3: Memory */}
+        <div 
+          onClick={fetchMemory}
+          className="w-12 h-12 bg-[#bdb2ff] border-2 border-black rounded-[12px] 
+                        shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] 
+                        flex items-center justify-center cursor-pointer 
+                        hover:translate-x-[1px] hover:translate-y-[1px] transition"
+          title="Memory Box"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
       </div>
+
+      {showMemoryModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-[#fffdf9] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="p-4 border-b-4 border-black bg-[#dfe7fd] flex justify-between items-center">
+              <h2 className="text-2xl font-bold italic">Memory Box</h2>
+              <button onClick={handleCloseMemoryModal} className="font-bold text-xl hover:text-red-500 cursor-pointer">X</button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 no-scrollbar">
+              {Object.entries(
+                memoryMessages.reduce((acc, msg) => {
+                  if (!acc[msg.groupName]) acc[msg.groupName] = [];
+                  acc[msg.groupName].push(msg);
+                  return acc;
+                }, {})
+              ).map(([groupName, messages]) => (
+                <div key={groupName} className="border-2 border-black p-4 rounded-[12px] bg-[#f0efeb] shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)]">
+                  <h3 className="text-xl font-bold mb-3 border-b-2 border-black pb-1 uppercase">{groupName}</h3>
+                  <div className="flex flex-col gap-3">
+                    {messages.map((msg) => (
+                      <div key={msg.messageId} className="bg-white border-2 border-black p-3 rounded-[8px] shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)]">
+                        <div className="flex justify-between items-start mb-1">
+                          <span className="font-bold text-[#fb8500]">@{msg.senderTag}</span>
+                          <span className="text-xs text-gray-500">{new Date(msg.pinnedAt).toLocaleString()}</span>
+                        </div>
+                        <p className="text-gray-800">{msg.messageContent}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              {memoryMessages.length === 0 && (
+                <div className="text-center py-10 text-gray-500 italic">
+                  No memories yet... Start starring messages!
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {showCreateModal && <CreateGroupModal onClose={handleCloseCreateModal} onGroupCreate={onGroupCreate} />}
       {showJoinModal && <JoinGroupModal onClose={handleCloseJoinModal} onGroupJoin={onGroupJoin} />}
       {showSettingsModal && <UserSettingsModal onClose={handleCloseSettingsModal} />}

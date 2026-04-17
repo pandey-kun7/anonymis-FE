@@ -4,13 +4,15 @@ Anonymis is a modern, real-time chat application built with React 19 and Vite. I
 
 ## 🚀 Features
 
-- **Real-time Messaging**: Powered by Socket.io for instantaneous message delivery.
+- **Real-time Messaging**: Powered by Socket.io for instantaneous message delivery with real-time status indicators.
+- **Message Starring**: Users can "star" important messages in any chat room for quick reference.
+- **Memory Box**: A dedicated storage space to view all starred messages across different groups, neatly organized by group name.
 - **Authentication System**: Complete flow including Sign-up, Login, and OTP (One-Time Password) verification.
-- **Group Management**: Users can create new chat groups or join existing ones.
+- **Group Management**: Seamlessly create or join chat groups with unique group IDs.
 - **Protected Routes**: Secure access to the chat interface ensuring only authenticated users can participate.
-- **Offline Resilience**: Basic support for handling message sending during network interruptions.
-- **Unique Aesthetic**: A "Neubrutalist" inspired design with bold borders, custom shadows, and a playful "cursive" font style.
-- **Modern Tech Stack**: Built with React 19 and Tailwind CSS 4 for high performance and rapid styling.
+- **Offline Resilience**: Intelligent handling of network interruptions by queuing messages and syncing them automatically when back online.
+- **Neubrutalist UI**: A high-contrast, modern aesthetic featuring bold 2px/4px borders, hard shadows, and vibrant pastel accents.
+- **Interactive Visuals**: Interactive star icons with grayscale-to-color transitions and scaling effects for better UX.
 
 ## 🛠️ Tech Stack
 

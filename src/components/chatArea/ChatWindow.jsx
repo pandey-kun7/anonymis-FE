@@ -77,6 +77,30 @@ export default function ChatWindow({ groupId, initialMessages = [] }) {
     };
   }, [groupId, userId, connectionStatus]);
 
+  const starMessage = async (messageId) => {
+    try {
+      const response = await fetch("http://localhost:8000/api/star-message", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({ groupId, messageId }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to star message");
+      }
+      console.log("Message starred successfully");
+      setMessages((prev) => 
+        prev.map((msg) => 
+          msg._id === messageId ? { ...msg, isStarred: true } : msg
+        )
+      );
+    } catch (error) {
+      console.error("Error starring message:", error);
+    }
+  };
+
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (input.trim() === "" || !groupId || !userId) {
@@ -149,13 +173,26 @@ export default function ChatWindow({ groupId, initialMessages = [] }) {
         {messages.map((msg, index) => (
           <div
             key={msg._id || index}
-            className={`max-w-[70%] wrap-break-word p-3 rounded-[15px] border-2 border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.8)] ${
+            className={`max-w-[70%] wrap-break-word p-3 rounded-[15px] border-2 border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,0.8)] flex justify-between items-end gap-2 ${
               msg.senderId === userId
                 ? "self-end bg-[#caffbf]"
                 : "self-start bg-[#fffdf9]"
             }`}
           >
-            <strong>{msg.senderId === userId ? "You" : msg.senderTag}:</strong> {msg.content}
+            <div className="flex-1">
+              <strong>{msg.senderId === userId ? "You" : msg.senderTag}:</strong> {msg.content}
+            </div>
+            <button 
+              onClick={() => starMessage(msg._id)}
+              className={`text-[12px] transition-all cursor-pointer ${
+                msg.isStarred 
+                  ? "text-yellow-500 grayscale-0 opacity-100 scale-110" 
+                  : "text-gray-400 grayscale opacity-60 hover:grayscale-0 hover:opacity-100"
+              }`}
+              title="Star Message"
+            >
+              ⭐
+            </button>
           </div>
         ))}
       </div>
