@@ -36,6 +36,10 @@ export default function LoginPage({ showPopup }) {
     }
   };
 
+  const handleSignup = ()=>{
+    navigate("/")
+  }
+
   return (
     <div className="min-h-screen min-w-screen bg-[#f4f1ee] flex items-center justify-center font-[cursive]">
       
@@ -45,12 +49,12 @@ export default function LoginPage({ showPopup }) {
                       flex items-center justify-center bg-[#eae7e2]">
         
         {/* Inner Card */}
-        <div className="w-[30vw] p-8 border-2 border-black rounded-[25px] 
+        <div className="w-[30vw]  p-8 border-2 border-black rounded-[25px] 
                         shadow-[5px_5px_0px_0px_rgba(0,0,0,0.8)] 
                         bg-[#fffdf9] flex flex-col gap-6">
 
           {/* Big Login Title */}
-          <div className="text-center text-4xl border-2 border-black rounded-[15px] 
+          <div className="text-center  text-4xl border-2 border-black rounded-[15px] 
                           shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)]
                           bg-[#dfe7fd] py-2">
             Login
@@ -93,6 +97,12 @@ export default function LoginPage({ showPopup }) {
                              hover:translate-x-[1px] hover:translate-y-[1px] transition cursor-pointer">
             Login
           </button>
+
+          <div className="text-center mt-2">
+            Don't have an account? Go to <span className="text-sm text-blue-600 hover:underline cursor-pointer" onClick={handleSignup}>
+                Signup Page
+            </span>
+          </div>
 
         </div>
       </div>

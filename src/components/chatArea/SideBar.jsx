@@ -10,6 +10,7 @@ export default function SideBar({ onGroupCreate, onGroupJoin }) {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showMemoryModal, setShowMemoryModal] = useState(false);
   const [memoryMessages, setMemoryMessages] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState(null);
   const dropdownRef = useRef(null);
 
   const handleToggleDropdown = () => {
@@ -62,7 +63,14 @@ export default function SideBar({ onGroupCreate, onGroupJoin }) {
 
   const handleCloseMemoryModal = () => {
     setShowMemoryModal(false);
+    setSelectedGroup(null);
   };
+
+  const groupedMemories = memoryMessages.reduce((acc, msg) => {
+    if (!acc[msg.groupName]) acc[msg.groupName] = [];
+    acc[msg.groupName].push(msg);
+    return acc;
+  }, {});
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -80,7 +88,7 @@ export default function SideBar({ onGroupCreate, onGroupJoin }) {
   return (
     <>
       <div className="w-[80px] h-full border-r-2 border-black flex flex-col items-center py-6 gap-6 bg-[#f7f7f7]">
-        {/* Option 1: Chats */}
+        {/* Option 1: Chats
         <div className="w-12 h-12 bg-[#caffbf] border-2 border-black rounded-[12px] 
                         shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] 
                         flex items-center justify-center cursor-pointer 
@@ -88,7 +96,7 @@ export default function SideBar({ onGroupCreate, onGroupJoin }) {
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
           </svg>
-        </div>
+        </div> */}
         
         {/* Add Group Button */}
         <div className="relative" ref={dropdownRef}>
@@ -153,35 +161,65 @@ export default function SideBar({ onGroupCreate, onGroupJoin }) {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-[#fffdf9] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
             <div className="p-4 border-b-4 border-black bg-[#dfe7fd] flex justify-between items-center">
-              <h2 className="text-2xl font-bold italic">Memory Box</h2>
+              <div className="flex items-center gap-3">
+                {selectedGroup && (
+                  <button 
+                    onClick={() => setSelectedGroup(null)}
+                    className="p-1 border-2 border-black rounded-full hover:bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer"
+                    title="Back to Groups"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                  </button>
+                )}
+                <h2 className="text-2xl font-bold italic">
+                  {selectedGroup ? `Memory: ${selectedGroup}` : "Memory Box"}
+                </h2>
+              </div>
               <button onClick={handleCloseMemoryModal} className="font-bold text-xl hover:text-red-500 cursor-pointer">X</button>
             </div>
             <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 no-scrollbar">
-              {Object.entries(
-                memoryMessages.reduce((acc, msg) => {
-                  if (!acc[msg.groupName]) acc[msg.groupName] = [];
-                  acc[msg.groupName].push(msg);
-                  return acc;
-                }, {})
-              ).map(([groupName, messages]) => (
-                <div key={groupName} className="border-2 border-black p-4 rounded-[12px] bg-[#f0efeb] shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)]">
-                  <h3 className="text-xl font-bold mb-3 border-b-2 border-black pb-1 uppercase">{groupName}</h3>
-                  <div className="flex flex-col gap-3">
-                    {messages.map((msg) => (
-                      <div key={msg.messageId} className="bg-white border-2 border-black p-3 rounded-[8px] shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)]">
-                        <div className="flex justify-between items-start mb-1">
-                          <span className="font-bold text-[#fb8500]">@{msg.senderTag}</span>
-                          <span className="text-xs text-gray-500">{new Date(msg.pinnedAt).toLocaleString()}</span>
-                        </div>
-                        <p className="text-gray-800">{msg.messageContent}</p>
-                      </div>
-                    ))}
-                  </div>
+              {!selectedGroup ? (
+                /* Group Grid View */
+                <div className="grid grid-cols-2 gap-4">
+                  {Object.keys(groupedMemories).map((groupName) => (
+                    <div 
+                      key={groupName}
+                      onClick={() => setSelectedGroup(groupName)}
+                      className="border-4 border-black p-6 rounded-[20px] bg-[#caffbf] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] 
+                                 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] 
+                                 transition-all cursor-pointer flex flex-col items-center justify-center gap-2"
+                    >
+                      <span className="text-xl font-black uppercase text-center">{groupName}</span>
+                      <span className="text-sm font-bold bg-white/50 px-2 py-0.5 rounded-full border-2 border-black">
+                        {groupedMemories[groupName].length} items
+                      </span>
+                    </div>
+                  ))}
+                  {Object.keys(groupedMemories).length === 0 && (
+                    <div className="col-span-2 text-center py-10 text-gray-500 italic">
+                      No memories yet... Start starring messages!
+                    </div>
+                  )}
                 </div>
-              ))}
-              {memoryMessages.length === 0 && (
-                <div className="text-center py-10 text-gray-500 italic">
-                  No memories yet... Start starring messages!
+              ) : (
+                /* Starred Messages View */
+                <div className="flex flex-col gap-4">
+                  {groupedMemories[selectedGroup].map((msg) => (
+                    <div 
+                      key={msg.messageId} 
+                      className="bg-white border-4 border-black p-4 rounded-[15px] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      <div className="flex justify-between items-start mb-2 border-b-2 border-black/10 pb-1">
+                        <span className="font-black text-[#fb8500]">@{msg.senderTag}</span>
+                        <span className="text-[10px] font-bold uppercase text-gray-500">
+                          {new Date(msg.pinnedAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-gray-800 font-medium leading-relaxed">{msg.messageContent}</p>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

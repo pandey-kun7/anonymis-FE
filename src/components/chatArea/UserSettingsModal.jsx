@@ -10,11 +10,11 @@ export default function UserSettingsModal({ onClose }) {
   });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const email = localStorage.getItem("email");
+  const token = localStorage.getItem("token");
   useEffect(() => {
     async function fetchData() {
       try {
-        const token = localStorage.getItem("token");
-        const email = localStorage.getItem("email");
 
         if (!email) return;
 
@@ -31,9 +31,8 @@ export default function UserSettingsModal({ onClose }) {
 
         const res = await response.json();
 
-        // Assuming res is an array based on user's manual change: const user = res[0];
         const user = Array.isArray(res.data) ? res.data[0] : res.data || res;
-        
+
         if (user) {
           setUserInfo({
             userAlias: user.userAlias || "",
@@ -52,6 +51,24 @@ export default function UserSettingsModal({ onClose }) {
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
+  };
+
+  const handleDeleteAccount = async () => {
+    const response = await fetch(
+      `http://localhost:8000/api/auth/delete-user-account/${email}`,
+      { 
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    const res = await response.json();
+    if (res.success) {
+      localStorage.clear();
+      navigate("/login");
+    }
   };
 
   const handleUpdateProfile = async () => {
@@ -90,26 +107,34 @@ export default function UserSettingsModal({ onClose }) {
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center font-[cursive]"
       style={{ zIndex: 101 }}
     >
-      <div className="bg-white rounded-[35px] border-2 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,0.8)] w-[600px] h-[450px] flex overflow-hidden relative">
+      <div className="bg-white h-[80vh] rounded-[35px] border-2 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,0.8)] w-[600px] h-[450px] flex overflow-hidden relative">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-6 text-2xl font-bold z-20"
+          className="absolute top-4 right-6 text-2xl font-bold z-20  cursor-pointer"
         >
           &times;
         </button>
 
         {/* Left Sidebar in Modal */}
-        <div className="w-[150px] bg-[#dfe7fd] border-r-2 border-black flex flex-col items-center py-8 justify-between">
+        <div className="w-[150px] bg-[#dfe7fd] border-r-2 border-black flex flex-col items-center py-8 ">
           <div className="flex flex-col items-center gap-4">
             <div className="w-16 h-16 bg-[#ffadad] border-2 border-black rounded-full flex items-center justify-center font-bold text-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)]">
               {userInfo.userAlias[0]?.toUpperCase() || "?"}
             </div>
-            <span className="font-bold text-xs text-center px-2">
+            <span className="font-bold text-xs text-center px-2 mb-[20vh]">
               {userInfo.userAlias}
             </span>
           </div>
-
+          <button
+            onClick={handleDeleteAccount}
+            className="w-24 px-2 py-2 border-2 border-black rounded-[12px] m-3
+                       shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] 
+                       bg-[#ffadad] hover:translate-x-[1px] hover:translate-y-[1px] transition
+                       font-bold text-sm"
+          >
+            Delete Account
+          </button>
           <button
             onClick={handleLogout}
             className="w-24 px-2 py-2 border-2 border-black rounded-[12px] 
@@ -122,7 +147,7 @@ export default function UserSettingsModal({ onClose }) {
         </div>
 
         {/* Right Content Area */}
-        <div className="flex-1 p-8 overflow-y-auto">
+        <div className="flex-1 p-8 overflow-y-auto no-scrollbar h-[70vh]">
           <h2 className="text-2xl font-bold mb-6">User Settings</h2>
 
           {error && (

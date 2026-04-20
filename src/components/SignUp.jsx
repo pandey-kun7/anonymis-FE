@@ -13,15 +13,17 @@ function generateUserTag(){
     
 }
 
-const userTag = generateUserTag();
-
 export default function SignUp({ showPopup }) {
 
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userAlias, setUserAlias] = useState("");
-  
+  const [userTag, setUserTag] = useState(generateUserTag());
+
+  const handleGenerateTag = () => {
+    setUserTag(generateUserTag());
+  };
 
   const handleSignUp = async () => {
     const apiUrl = "http://localhost:8000/api/auth/signup";
@@ -116,17 +118,30 @@ export default function SignUp({ showPopup }) {
             />
           </div>
 
+
           <div className="flex flex-col gap-1">
             <label className="text-sm">User Tag</label>
-            <input
-              type="text"
-              placeholder="password goes here"
-              value={userTag}
-              className="w-full px-4 py-2 border-2 border-black rounded-[10px] 
-                         shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)]
-                         bg-[#fefae0] outline-none"
-              disabled
-            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="tag will appear here"
+                value={userTag}
+                className="flex-1 px-4 py-2 border-2 border-black rounded-[10px] 
+                           shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)]
+                           bg-[#fefae0] outline-none"
+                disabled
+              />
+              <button
+                onClick={handleGenerateTag}
+                type="button"
+                className="px-3 py-1 border-2 border-black rounded-[10px] 
+                           shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)]
+                           bg-[#ffcfd2] hover:translate-x-[1px] hover:translate-y-[1px] 
+                           transition cursor-pointer text-sm"
+              >
+                Generate
+              </button>
+            </div>
           </div>
 
           {/* Sign up Button */}

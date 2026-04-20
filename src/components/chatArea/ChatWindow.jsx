@@ -79,7 +79,7 @@ export default function ChatWindow({ groupId, initialMessages = [] }) {
 
   const starMessage = async (messageId) => {
     try {
-      const response = await fetch("http://localhost:8000/api/star-message", {
+      const response = await fetch("http://localhost:8000/api/service/star-message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -155,7 +155,7 @@ export default function ChatWindow({ groupId, initialMessages = [] }) {
   return (
     <div className="flex-1 flex flex-col bg-[#eae7e2] overflow-hidden border-r-2 border-black">
       {/* Header */}
-      <div className="p-4 border-b-2 border-black bg-[#dfe7fd] flex justify-between items-center">
+      <div className="p-5 border-b-2 border-black bg-[#dfe7fd] flex justify-between items-center">
         <h2 className="text-2xl font-bold">Chat Room</h2>
         <div className="flex items-center gap-2">
           <span className="text-sm">{connectionStatus}</span>
